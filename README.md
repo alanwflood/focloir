@@ -26,6 +26,9 @@ Examples:
    fclr dictionary.txt playfil 3
 ```
 
+There is an additional binary file `./fclr` which aliases the above deno command
+
+
 ## Tests
 
 Focloir uses Deno's own test suite, just run `deno test`
