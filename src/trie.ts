@@ -136,7 +136,7 @@ export class Trie implements TrieInterface {
 
     const result = results.values().next().value;
 
-    // return "Correct" if result is equal to the `word` arguments
+    // return "Correct" if result is equal to the `word` argument
     // else return the similar word
     return result === word
       ? {
