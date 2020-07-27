@@ -1,0 +1,12 @@
+car
+dog
+dot
+first
+fork
+fort
+human
+playful
+python
+sweet
+very
+wonderful

@@ -1,5 +1,10 @@
 import { blue, red, green } from "https://deno.land/std/fmt/colors.ts";
 
+/**
+ * A node within the Trie, containing the finished word if it's the final letter in a sequence and additional letters that can come after it.
+ *
+ * @example new TrieNode("batman")
+ */
 class TrieNode {
   word: string | undefined;
   children: Map<string, TrieNode>;
@@ -16,9 +21,19 @@ interface TrieInterface {
   search(word: string, maxCost: number): string;
 }
 
+/**
+ * `Tree-based data structure` used to hold associative arrays of keys linking nodes together.
+ *
+ * This implementation is used as a dictionary lookup for words, linking letters together as nodes.
+ *
+ * @see {@link https://en.wikipedia.org/wiki/Trie|Trie on Wikipedia}
+ */
 export class Trie implements TrieInterface {
   private rootNode: TrieNode = new TrieNode();
 
+  /**
+   * Seperate the given `word` into letters and insert it into the Trie data structure as a series of linked nodes.
+   */
   private insertWord(word: string): void {
     let currentNode: TrieNode = this.rootNode;
 
@@ -36,24 +51,20 @@ export class Trie implements TrieInterface {
     if (currentNode.word !== word) currentNode.word = word;
   }
 
+  /**
+   * Insert a single word, or array of words into the Trie
+   */
   insert(words: string | string[]): void {
     Array.isArray(words)
       ? words.forEach((word) => this.insertWord(word))
       : this.insertWord(words);
   }
 
-  contains(word: string) {
-    let currentNode: TrieNode = this.rootNode;
-
-    for (let i = 0; i < word.length; i++) {
-      let letter = word.charAt(i);
-      const nextNode = currentNode.children.get(letter);
-      if (nextNode !== undefined) currentNode = nextNode;
-      else return false;
-    }
-    return true;
-  }
-
+  /**
+   * Using the Levenshtein algorithm, recursively check edit distances between words to find a similar one in the Trie.
+   *
+   * @see {@Link https://en.wikipedia.org/wiki/Levenshtein_distance|Levenshtein Distance on Wikipedia}
+   */
   private searchRecursive(
     node: TrieNode,
     letter: string,
@@ -90,18 +101,28 @@ export class Trie implements TrieInterface {
     }
   }
 
+  /**
+   * Searchs previously inserted words for a word similar to the `word` argument
+   *
+   * @example Trie.search("batman", 2);
+   *
+   * @param {string} word - searchs the Trie for this word or something similar
+   * @param {number} maxCost - determines how many edits can be made to find the `word`
+   */
   search(word: string, maxCost: number = 2) {
-    const currentRow = [...Array(word.length + 1).keys()];
+    const rows = [...Array(word.length + 1).keys()];
     const results: Set<string> = new Set();
 
     this.rootNode.children.forEach((node, letter) => {
-      this.searchRecursive(node, letter, word, currentRow, results, maxCost);
+      this.searchRecursive(node, letter, word, rows, results, maxCost);
     });
 
-    return results.size > 0
-      ? `Looking for: ${blue(word)}\nFound: ${green(
-          results.values().next().value
-        )}`
-      : `Could not find word similar to: ${red(word)}`;
+    // As per requirements, return "Word not found" if results are 0
+    if (results.size === 0) return red("Word not found");
+
+    const result = results.values().next().value;
+
+    // As per requirements, return "Correct" if result is equal to the `word` argument
+    return result === word ? green("Correct") : blue(result);
   }
 }
