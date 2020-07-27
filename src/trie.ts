@@ -68,7 +68,10 @@ export class Trie implements TrieInterface {
       : this.insertWord(words);
   }
 
-  private contains(word: string) {
+  /**
+   * Find exact `word` in Trie
+   */
+  private contains(word: string): boolean {
     let currentNode: TrieNode = this.rootNode;
 
     for (let i = 0; i < word.length; i++) {
@@ -137,12 +140,13 @@ export class Trie implements TrieInterface {
    * @param {number} maxCost - determines how many edits can be made to find the `word`
    */
   search(word: string, maxCost: number = 2): SearchResponseType {
-    const foundResponse = {
-      response: SearchResponse.FOUND,
-      payload: "Correct",
-    };
-
-    if (this.contains(word)) return foundResponse;
+    // Try finding the exact word first
+    if (this.contains(word)) {
+      return {
+        response: SearchResponse.FOUND,
+        payload: "Correct",
+      };
+    }
 
     const rows = [...Array(word.length + 1).keys()];
     const results: Set<[number, string]> = new Set();
@@ -167,8 +171,7 @@ export class Trie implements TrieInterface {
 
     const result = filteredResults[0][1];
 
-    // return "Correct" if result is equal to the `word` argument
-    // else return the similar word
+    // return a similar word
     return {
       response: SearchResponse.FOUND_SIMILAR,
       payload: result,
