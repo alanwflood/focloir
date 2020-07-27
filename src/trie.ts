@@ -160,7 +160,7 @@ export class Trie implements TrieInterface {
 
     // Filter found words that are too long
     const filteredResults = Array.from(results.values()).filter(
-      ([cost, value]) => Math.abs(value.length - word.length) + cost < 3
+      ([cost, value]) => Math.abs(value.length - word.length) + cost < maxCost
     );
 
     // return "Word not found" if results are 0
