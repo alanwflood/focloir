@@ -1,6 +1,6 @@
 # Focloir
 
-Focloir (Pronounced Folk-Lore) is a Trie based word-lookup CLI built with [Deno](https://deno.land/).
+Focloir (Pronounced Folk-Lore) is a Trie based word-lookup CLI built with [Deno](https://deno.land/) and [Typescript](https://www.typescriptlang.org/).
 
 ## Compiling
 
@@ -11,6 +11,20 @@ After this simply bundle the tool into a single fclr.js file by running `deno bu
 ## Running
 
 Focloir can be run with the command `deno run --allow-read fclr.js`
+
+Running the above will explain the tools usages as following:
+
+```
+Usage: fclr [-h|--help] [file] [searchterm] [edit distance (default: 2)]
+
+Examples:
+
+// search for word in file:
+   fclr dictionary.txt catnip
+
+// search for word with edit distance of 3:
+   fclr dictionary.txt playfil 3
+```
 
 ## Tests
 
