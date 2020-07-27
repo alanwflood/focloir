@@ -68,6 +68,18 @@ export class Trie implements TrieInterface {
       : this.insertWord(words);
   }
 
+  private contains(word: string) {
+    let currentNode: TrieNode = this.rootNode;
+
+    for (let i = 0; i < word.length; i++) {
+      let letter = word.charAt(i);
+      const nextNode = currentNode.children.get(letter);
+      if (nextNode !== undefined) currentNode = nextNode;
+      else return false;
+    }
+    return true;
+  }
+
   /**
    * Using the Levenshtein algorithm, recursively check edit distances between words to find a similar one in the Trie.
    *
@@ -125,6 +137,13 @@ export class Trie implements TrieInterface {
    * @param {number} maxCost - determines how many edits can be made to find the `word`
    */
   search(word: string, maxCost: number = 2): SearchResponseType {
+    const foundResponse = {
+      response: SearchResponse.FOUND,
+      payload: "Correct",
+    };
+
+    if (this.contains(word)) return foundResponse;
+
     const rows = [...Array(word.length + 1).keys()];
     const results: Set<[number, string]> = new Set();
 
@@ -150,14 +169,9 @@ export class Trie implements TrieInterface {
 
     // return "Correct" if result is equal to the `word` argument
     // else return the similar word
-    return result === word
-      ? {
-          response: SearchResponse.FOUND,
-          payload: "Correct",
-        }
-      : {
-          response: SearchResponse.FOUND_SIMILAR,
-          payload: result,
-        };
+    return {
+      response: SearchResponse.FOUND_SIMILAR,
+      payload: result,
+    };
   }
 }
