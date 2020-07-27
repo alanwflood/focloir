@@ -78,13 +78,13 @@ export class Trie implements TrieInterface {
     letter: string,
     word: string,
     previousRow: ReadonlyArray<number>,
-    results: Set<string>,
+    results: Set<[number, string]>,
     maxCost: number
   ) {
-    const previousColumn = word.length;
+    const lastColumn = word.length;
     const currentRow = [previousRow[0] + 1];
 
-    for (let column = 1; column <= previousColumn; column++) {
+    for (let column = 1; column <= lastColumn; column++) {
       let replaceCost: number;
       const insertCost = currentRow[column - 1] + 1;
       const deleteCost = previousRow[column] + 1;
@@ -95,16 +95,23 @@ export class Trie implements TrieInterface {
         replaceCost = previousRow[column - 1];
       }
 
-      currentRow[column] = Math.min(deleteCost, insertCost, replaceCost);
+      currentRow.push(Math.min(deleteCost, insertCost, replaceCost));
     }
 
-    if (currentRow[previousColumn] <= maxCost && node.word !== undefined) {
-      results.add(node.word);
+    if (currentRow[lastColumn] <= maxCost && node.word !== undefined) {
+      results.add([currentRow[lastColumn], node.word]);
     }
 
     if (Math.min(...currentRow) <= maxCost) {
-      node.children.forEach((node, letter) => {
-        this.searchRecursive(node, letter, word, currentRow, results, maxCost);
+      node.children.forEach((_node, letter) => {
+        this.searchRecursive(
+          node.children.get(letter)!,
+          letter,
+          word,
+          currentRow,
+          results,
+          maxCost
+        );
       });
     }
   }
@@ -119,22 +126,27 @@ export class Trie implements TrieInterface {
    */
   search(word: string, maxCost: number = 2): SearchResponseType {
     const rows = [...Array(word.length + 1).keys()];
-    const results: Set<string> = new Set();
+    const results: Set<[number, string]> = new Set();
 
     // Runs in O(n * k) time. Words multipled by length of search term.
     this.rootNode.children.forEach((node, letter) => {
       this.searchRecursive(node, letter, word, rows, results, maxCost);
     });
 
+    // Filter found words that are too long
+    const filteredResults = Array.from(results.values()).filter(
+      ([cost, value]) => Math.abs(value.length - word.length) + cost < 3
+    );
+
     // return "Word not found" if results are 0
-    if (results.size === 0) {
+    if (filteredResults.length === 0) {
       return {
         response: SearchResponse.NOT_FOUND,
         payload: "Word not found",
       };
     }
 
-    const result = results.values().next().value;
+    const result = filteredResults[0][1];
 
     // return "Correct" if result is equal to the `word` argument
     // else return the similar word
