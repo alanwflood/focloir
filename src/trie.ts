@@ -1,5 +1,5 @@
 /**
- * A node within the Trie, containing the finished word if it's the final letter in a sequence and additional letters that can come after it.
+ * A node within the Trie, containing the finished `word` if it's the final letter in a sequence and additional letters that can come after it as `children`.
  *
  * @example new TrieNode("batman")
  */
