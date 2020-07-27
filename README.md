@@ -12,6 +12,20 @@ After this simply bundle the tool into a single fclr.js file by running `deno bu
 
 Focloir can be run with the command `deno run --allow-read fclr.js`
 
+Running the above will explain the tools usages as following:
+
+```
+Usage: fclr [-h|--help] [file] [searchterm] [edit distance (default: 2)]
+
+Examples:
+
+// search for word in file:
+   fclr dictionary.txt catnip
+
+// search for word with edit distance of 3:
+   fclr dictionary.txt playfil 3
+```
+
 ## Tests
 
 Focloir uses Deno's own test suite, just run `deno test`
