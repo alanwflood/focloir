@@ -1,6 +1,6 @@
 # Focloir
 
-Focloir (Pronounced Folk-Lore) is a Trie based word-lookup CLI built with [Deno](https://deno.land/).
+Focloir (Pronounced Folk-Lore) is a Trie based word-lookup CLI built with [Deno](https://deno.land/) and [Typescript](https://www.typescriptlang.org/).
 
 ## Compiling
 
