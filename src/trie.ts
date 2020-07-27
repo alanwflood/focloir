@@ -1,5 +1,3 @@
-import { blue, red, green } from "https://deno.land/std/fmt/colors.ts";
-
 /**
  * A node within the Trie, containing the finished word if it's the final letter in a sequence and additional letters that can come after it.
  *
@@ -15,10 +13,20 @@ class TrieNode {
   }
 }
 
+export enum SearchResponse {
+  NOT_FOUND,
+  FOUND,
+  FOUND_SIMILAR,
+}
+
+type SearchResponseType = {
+  response: SearchResponse;
+  payload: string;
+};
+
 interface TrieInterface {
   insert(word: string): void;
-  contains(word: string): boolean;
-  search(word: string, maxCost: number): string;
+  search(word: string, maxCost: number): SearchResponseType;
 }
 
 /**
@@ -109,7 +117,7 @@ export class Trie implements TrieInterface {
    * @param {string} word - searchs the Trie for this word or something similar
    * @param {number} maxCost - determines how many edits can be made to find the `word`
    */
-  search(word: string, maxCost: number = 2) {
+  search(word: string, maxCost: number = 2): SearchResponseType {
     const rows = [...Array(word.length + 1).keys()];
     const results: Set<string> = new Set();
 
@@ -117,12 +125,26 @@ export class Trie implements TrieInterface {
       this.searchRecursive(node, letter, word, rows, results, maxCost);
     });
 
-    // As per requirements, return "Word not found" if results are 0
-    if (results.size === 0) return red("Word not found");
+    // return "Word not found" if results are 0
+    if (results.size === 0) {
+      return {
+        response: SearchResponse.NOT_FOUND,
+        payload: "Word not found",
+      };
+    }
 
     const result = results.values().next().value;
 
-    // As per requirements, return "Correct" if result is equal to the `word` argument
-    return result === word ? green("Correct") : blue(result);
+    // return "Correct" if result is equal to the `word` arguments
+    // else return the similar word
+    return result === word
+      ? {
+          response: SearchResponse.FOUND,
+          payload: "Correct",
+        }
+      : {
+          response: SearchResponse.FOUND_SIMILAR,
+          payload: result,
+        };
   }
 }
