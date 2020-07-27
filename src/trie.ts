@@ -24,6 +24,8 @@ type SearchResponseType = {
   payload: string;
 };
 
+type SearchResultsType = Set<[number, string]>;
+
 interface TrieInterface {
   insert(word: string): void;
   search(word: string, maxCost: number): SearchResponseType;
@@ -93,7 +95,7 @@ export class Trie implements TrieInterface {
     letter: string,
     word: string,
     previousRow: ReadonlyArray<number>,
-    results: Set<[number, string]>,
+    results: SearchResultsType,
     maxCost: number
   ) {
     const lastColumn = word.length;
@@ -149,7 +151,7 @@ export class Trie implements TrieInterface {
     }
 
     const rows = [...Array(word.length + 1).keys()];
-    const results: Set<[number, string]> = new Set();
+    const results: SearchResultsType = new Set();
 
     // Runs in O(n * k) time. Words multipled by length of search term.
     this.rootNode.children.forEach((node, letter) => {
