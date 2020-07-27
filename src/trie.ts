@@ -121,6 +121,7 @@ export class Trie implements TrieInterface {
     const rows = [...Array(word.length + 1).keys()];
     const results: Set<string> = new Set();
 
+    // Runs in O(n * k) time. Words multipled by length of search term.
     this.rootNode.children.forEach((node, letter) => {
       this.searchRecursive(node, letter, word, rows, results, maxCost);
     });
