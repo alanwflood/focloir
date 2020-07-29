@@ -82,7 +82,8 @@ export class Trie implements TrieInterface {
       if (nextNode !== undefined) currentNode = nextNode;
       else return false;
     }
-    return true;
+
+    return currentNode.word === word;
   }
 
   /**
@@ -160,7 +161,7 @@ export class Trie implements TrieInterface {
 
     // Filter found words that are too long
     const filteredResults = Array.from(results.values()).filter(
-      ([cost, value]) => Math.abs(value.length - word.length) + cost < maxCost
+      ([_cost, value]) => Math.abs(value.length - word.length) <= maxCost
     );
 
     // return "Word not found" if results are 0

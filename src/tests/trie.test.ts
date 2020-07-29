@@ -52,5 +52,25 @@ Deno.test({
     stub = t.search("notarilword");
     assertEquals("Word not found", stub.payload);
     assertEquals(res.NOT_FOUND, stub.response);
+
+    stub = t.search("wonderfulx");
+    assertEquals("wonderful", stub.payload);
+    assertEquals(res.FOUND_SIMILAR, stub.response);
+
+    stub = t.search("wonderfulxx");
+    assertEquals("wonderful", stub.payload);
+    assertEquals(res.FOUND_SIMILAR, stub.response);
+
+    stub = t.search("wonderfulxx", 1);
+    assertEquals("Word not found", stub.payload);
+    assertEquals(res.NOT_FOUND, stub.response);
+
+    stub = t.search("wonderfulxxx", 3);
+    assertEquals("wonderful", stub.payload);
+    assertEquals(res.FOUND_SIMILAR, stub.response);
+
+    stub = t.search("wonderfuyyyy", 3);
+    assertEquals("Word not found", stub.payload);
+    assertEquals(res.NOT_FOUND, stub.response);
   },
 });
